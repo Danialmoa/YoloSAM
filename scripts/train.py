@@ -288,7 +288,7 @@ class Train:
         
 if __name__ == "__main__":
     finetune_config = SAMFinetuneConfig(
-        device='cuda',
+        device='cpu',
         wandb_project='SAM_finetune',
         wandb_name='test_run',
         model_type='vit_b',
