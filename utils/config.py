@@ -10,10 +10,15 @@ class SAMFinetuneConfig:
     checkpoint_path: Optional[str] = None
     model_type: str = "vit_b"
     image_size: int = 1024
-    num_points: int = 3
-    num_boxes: int = 3
-    num_masks: int = 1024
-    num_queries: int = 100
+    
+    # loss Dice + BCE + KL divergence -> Dice = 1 - BCE - KL
+    lambda_bce: float = 0.2 # for BCE loss (0.2)
+    lambda_kl: float = 0.2 # for KL divergence (0.2)
+    sigma: float = 1.0 # for soft label (KL divergence)
+
+    # wandb
+    wandb_project: str = "SAM-finetune"
+    wandb_name: str = "default"
     
     
 @dataclass
