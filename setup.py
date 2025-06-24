@@ -11,6 +11,9 @@ setup(
         "Pillow",
         "albumentations",
         "segment-anything @ git+https://github.com/facebookresearch/segment-anything.git",
+        "wandb",
+        "monai",
+        "tqdm",
     ],
     python_requires=">=3.8",
 )
