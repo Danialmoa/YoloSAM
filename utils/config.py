@@ -6,19 +6,30 @@ import os
 @dataclass
 class SAMFinetuneConfig:
     device: str = "cuda"
+    num_workers: int = 1
     sam_path: str = "pretrained/sam_vit_h_4b8939.pth"
     checkpoint_path: Optional[str] = None
     model_type: str = "vit_b"
     image_size: int = 1024
     
+    # training
+    batch_size: int = 2
+    num_epochs: int = 100
+    
     # loss Dice + BCE + KL divergence -> Dice = 1 - BCE - KL
     lambda_bce: float = 0.2 # for BCE loss (0.2)
     lambda_kl: float = 0.2 # for KL divergence (0.2)
     sigma: float = 1.0 # for soft label (KL divergence)
-
+    
+    # optimizer
+    learning_rate: float = 1e-4
+    weight_decay: float = 1e-4
+    
     # wandb
     wandb_project: str = "SAM-finetune"
-    wandb_name: str = "default"
+    wandb_name: str = "test"
+    wandb_mode: str = "disabled"
+    
     
     
 @dataclass
@@ -59,10 +70,8 @@ class SAMDatasetConfig:
 
     # point prompt
     point_prompt: bool = True
-    point_prompt_types: List[str] = field(default_factory=lambda: ['positive'])
-    
-    # number of points
     num_points: int = 3
+    point_prompt_types: List[str] = field(default_factory=lambda: ['positive'])
     
     # sample size (For testing)
     sample_size: int = 100
