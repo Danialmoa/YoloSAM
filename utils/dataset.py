@@ -5,45 +5,43 @@ from typing import Any, Dict, List, Union
 import numpy as np
 import torch
 from PIL import Image
-from torch.utils.data import DataLoader, Dataset
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 
 
 from utils.config import SAMDatasetConfig
-from models.prompt_generator import SAMBoxPromptGenerator, SAMPointPromptGenerator
+from utils.prompt import BoxPromptGenerator, PointPromptGenerator
 from utils.z_score_norm import PercentileNormalize
-
 
 class SAMDataset(torch.utils.data.Dataset):
     def __init__(self, config: Union[Dict, SAMDatasetConfig]):
         self.config = config if isinstance(config, SAMDatasetConfig) else SAMDatasetConfig(**config)
         
-        # Prompt generators
-        self.box_generator = SAMBoxPromptGenerator(
+        # Prompt generatorss
+        self.box_generator = BoxPromptGenerator(
             enable_direction_aug=self.config.enable_direction_aug,
-            enable_size_aug=self.config.enable_size_aug
+            enable_size_aug=self.config.enable_size_aug,
+            image_shape=(self.config.image_size, self.config.image_size)
         )
-        self.point_generator = SAMPointPromptGenerator(
+        self.point_generator = PointPromptGenerator(
             strategies=self.config.point_prompt_types,
-            number_of_points=self.config.number_of_points
+            number_of_points=self.config.num_points
         )
-        
+    
         if self.config.train:
             self.train_transforms = A.Compose([
                 A.RandomGamma(gamma_limit=self.config.gamma_limit, p=self.config.gamma_prob), # gamma augmentation
                 A.Rotate(limit=self.config.rotate_limit, p=self.config.rotate_prob),  # Random rotation between -15 and +15 degrees
                 A.RandomScale(scale_limit=self.config.scale_limit, p=self.config.scale_prob),  # Random scale by ±15%
                 A.HorizontalFlip(p=self.config.horizontal_flip_prob), # Horizontal flip
-                A.RandomBrightnessContrast(brightness_limit=self.config.brightness_limit, contrast_limit=self.config.contrast_limit, p=self.config.brightness_prob),
-                A.Resize(self.config.image_size[0], self.config.image_size[1]),  # Ensure final size
+                A.Resize(self.config.image_size, self.config.image_size),  # Ensure final size
                 PercentileNormalize(lower_percentile=self.config.percentiles[0], upper_percentile=self.config.percentiles[1]),
                 ToTensorV2()
             ], additional_targets={'mask': 'mask'})
             
         else:
             self.val_transforms = A.Compose([
-                A.Resize(self.config.image_size[0], self.config.image_size[1]),
+                A.Resize(self.config.image_size, self.config.image_size),
                 PercentileNormalize(lower_percentile=self.config.percentiles[0], upper_percentile=self.config.percentiles[1]),
                 ToTensorV2()
             ], additional_targets={'mask': 'mask'})
@@ -77,7 +75,8 @@ class SAMDataset(torch.utils.data.Dataset):
             if os.path.exists(mask_path):
                 self.image_paths.append(image_path)
                 self.mask_paths.append(mask_path)
-        
+            else:
+                print(f"Mask not found for image: {img_name}")
         
         if self.config.sample_size:
             indices = random.sample(range(len(self.image_paths)), 
@@ -143,19 +142,26 @@ class SAMDataset(torch.utils.data.Dataset):
         points_labels = []
         boxes = []
         
-        if self.config.point_prompt:
-            for i in range(self.config.num_points):
-                points, labels = self.point_generator.generate_points(mask_np)
-                points_coords.append(torch.tensor(points, dtype=torch.float32))
-                points_labels.append(torch.tensor(labels, dtype=torch.float32))
-            
-            points_coords = torch.stack(points_coords)  # Shape: [num_prompts, num_points, 2]
-            points_labels = torch.stack(points_labels)  # Shape: [num_prompts, num_points]
-            
-        if self.config.box_prompt:
-            box = self.box_generator.generate_boxes(mask_np)
-            boxes.append(torch.tensor(box, dtype=torch.float32))
-            boxes = torch.stack(boxes)
+        # *** NOTE: If yolo_prompt is True, point_prompt and box_prompt will be ignored. ***
+        if self.config.yolo_prompt:
+            pass # TODO: Get bounding boxes from yolo prompt
+            if self.config.point_prompt or self.config.box_prompt:
+                print(f"Warning: If yolo_prompt is True, point_prompt and box_prompt must be False. But point_prompt is {self.config.point_prompt} and box_prompt is {self.config.box_prompt}")
+        
+        else:
+            if self.config.point_prompt:
+                for i in range(self.config.num_points):
+                    points, labels = self.point_generator.generate(mask_np)
+                    points_coords.append(torch.tensor(points, dtype=torch.float32))
+                    points_labels.append(torch.tensor(labels, dtype=torch.float32))
+                
+                points_coords = torch.stack(points_coords)  # Shape: [num_prompts, num_points, 2]
+                points_labels = torch.stack(points_labels)  # Shape: [num_prompts, num_points]
+                
+            if self.config.box_prompt:
+                box = self.box_generator.generate(mask_np)
+                boxes.append(torch.tensor(box, dtype=torch.float32))
+                boxes = torch.stack(boxes)
 
         return {
             'image': image.float(),
@@ -169,13 +175,15 @@ class SAMDataset(torch.utils.data.Dataset):
 if __name__ == "__main__":
     # Test dataset
     config = SAMDatasetConfig(
-        dataset_path='./SAM_finetune/data/train',
+        dataset_path='./data/train',
         image_size=1024,
         point_prompt=True,
         box_prompt=True,
         num_points=3,
         train=True,
         remove_nonscar=True,
+        yolo_prompt=False,
+        point_prompt_types=['positive'],
         sample_size=10
     )
     dataset = SAMDataset(config)

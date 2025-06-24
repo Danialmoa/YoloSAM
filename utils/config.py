@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Optional, Tuple
 import os
 
@@ -36,11 +36,7 @@ class SAMDatasetConfig:
     
     # gamma
     gamma_prob: float = 0.7
-    gamma_limit: Tuple[float, float] = (0.8, 1.2)
-    
-    # brightness
-    brightness_prob: float = 0.7
-    contrast_prob: float = 0.7
+    gamma_limit: Tuple[float, float] = (80, 120)
     
     # train or val
     train: bool = True
@@ -49,8 +45,19 @@ class SAMDatasetConfig:
     remove_nonscar: bool = True
     
     # prompt
-    point_prompt: bool = True
+    yolo_prompt: bool = False # if True, use yolo boxes as prompt
+    
+    # box prompt
     box_prompt: bool = True
+    enable_direction_aug: bool = True
+    enable_size_aug: bool = True
+
+    # point prompt
+    point_prompt: bool = True
+    point_prompt_types: List[str] = field(default_factory=lambda: ['positive'])
     
     # number of points
     num_points: int = 3
+    
+    # sample size (For testing)
+    sample_size: int = 100
