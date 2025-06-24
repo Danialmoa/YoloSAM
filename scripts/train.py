@@ -304,7 +304,7 @@ if __name__ == "__main__":
         num_workers=0
     )
     train_dataset_config = SAMDatasetConfig(
-        dataset_path='./data/train/',
+        dataset_path='./sample_data/train/',
         remove_nonscar=True,
         sample_size=None,
         point_prompt=True,
@@ -318,7 +318,7 @@ if __name__ == "__main__":
     )
     
     val_dataset_config = SAMDatasetConfig(
-        dataset_path='./data/val/',
+        dataset_path='./sample_data/val/',
         remove_nonscar=True,
         sample_size=None,
         point_prompt=True,

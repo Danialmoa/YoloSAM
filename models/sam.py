@@ -2,7 +2,8 @@ import torch
 from segment_anything import sam_model_registry
 import torch.nn.functional as F
 import torch.nn as nn
-from typing import Tuple, List, Optional, Dict, Union
+import os
+from typing import Tuple, Optional, Dict
 
 from utils.config import SAMFinetuneConfig
 
@@ -23,6 +24,9 @@ class SAMModel(nn.Module):
         
     def load_model(self):
         """Load SAM model from checkpoint."""
+        if not os.path.exists(self.config.sam_path):
+            raise FileNotFoundError(f"SAM model checkpoint not found at {self.config.sam_path}, Please run `python download_sam.py` to download the base model.")
+            
         sam = sam_model_registry[self.config.model_type](checkpoint=self.config.sam_path)
         print("Load SAM model from ", self.config.sam_path)
         sam.to(self.device)
