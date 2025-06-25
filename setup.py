@@ -14,6 +14,7 @@ setup(
         "wandb",
         "monai",
         "tqdm",
+        "ultralytics",
     ],
     python_requires=">=3.8",
 )
