@@ -143,3 +143,15 @@ class YOLOConfig:
     wandb_project: str = "YOLO-training"
     wandb_name: str = "scar_detection"
     wandb_mode: str = "disabled"
+    
+@dataclass
+class YoloSAMInferenceConfig:
+    yolo_checkpoint_path: str = "checkpoints/yolo11n.pt"
+    sam_checkpoint_path: str = "checkpoints/sam_vit_b_01ec64.pth"
+    device: str = "cpu"
+    yolo_conf_threshold: float = 0.25
+    yolo_iou_threshold: float = 0.45
+    yolo_max_detections: int = 1
+    
+    
+
