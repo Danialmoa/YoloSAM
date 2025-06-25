@@ -18,7 +18,7 @@ The accurate segmentation of myocardial scars from cardiac MRI is essential for 
 ![Sample Detection](figures/sample_detection.png)
 *Figure 2: Sample myocardial scar detection and segmentation results on cardiac MRI*
 
-## ✨ Key Features
+## Key Features
 
 - **Robust to Noisy Labels**: Handles semi-automatic annotation noise using Kullback-Leibler loss
 - **Two-Stage Pipeline**: YOLO for efficient detection + SAM for precise segmentation
@@ -57,6 +57,7 @@ result = model.predict("path/to/cardiac_mri.png")
 
 ## Project Structure
 
+```
 YoloSAM/
 ├── models/ # Core model implementations
 │ ├── yolo.py # YOLO detection model
@@ -81,13 +82,16 @@ YoloSAM/
 │ ├── dataset.yaml # Dataset configuration
 │ ├── train/ # Training data
 │ └── val/ # Validation data
-└── checkpoints/ # Model checkpoints
-
+├── checkpoints/ # Model checkpoints
+├── README.md              # Project documentation
+├── LICENSE                # MIT License
+└── setup.py               # Package installation
+```
 
 ## Data Structure
 
 The project expects data in the following format:
-
+```
 your_dataset/
 ├── train/
 │ ├── images/ # Cardiac MRI images (.png/.jpg)
@@ -95,7 +99,7 @@ your_dataset/
 ├── val/
 │ ├── images/
 │ └── masks/
-
+```
 
 ## Models
 
@@ -110,7 +114,7 @@ your_dataset/
 - Robust to noisy labels using KL divergence loss
 
 
-## 📓 Google Colab Tutorial
+## Google Colab Tutorial
 
 For easy experimentation and fine-tuning, check out our comprehensive Jupyter notebook:
 
@@ -142,6 +146,6 @@ If you use this code in your research, please cite our paper:
 
 For questions and collaborations, please contact: [am1392@leicester.ac.uk, d.moafi@student.unisi.it]
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
