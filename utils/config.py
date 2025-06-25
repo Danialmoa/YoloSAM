@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List, Optional, Tuple
 import os
+import torch
 
 
 @dataclass
@@ -75,3 +76,64 @@ class SAMDatasetConfig:
     
     # sample size (For testing)
     sample_size: int = 100
+
+@dataclass
+class YOLOConfig:
+    # Model configuration
+    model_type: str = "yolo11n"
+    device: str = "cuda" if torch.cuda.is_available() else "cpu"
+    checkpoint_path: Optional[str] = None
+    
+    # Dataset configuration
+    dataset_path: str = "data/train"
+    val_dataset_path: Optional[str] = None
+    class_names: List[str] = field(default_factory=lambda: ['scar'])
+    
+    # Training parameters
+    epochs: int = 300
+    batch_size: int = 16
+    image_size: int = 640
+    patience: int = 50
+    
+    # Loss weights
+    box_loss_gain: float = 7.5
+    cls_loss_gain: float = 0.5
+    dfl_loss_gain: float = 1.5
+    
+    # Detection parameters
+    iou_threshold: float = 0.2
+    conf_threshold: float = 0.15
+    max_detections: int = 1
+    
+    # Augmentation parameters
+    mosaic: float = 0.9
+    mixup: float = 0.1
+    copy_paste: float = 0.4
+    scale: float = 0.5
+    fliplr: float = 0.5
+    flipud: float = 0.1
+    degrees: float = 15.0
+    translate: float = 0.3
+    hsv_h: float = 0.0
+    hsv_s: float = 0.0
+    hsv_v: float = 0.3
+    
+    # Optimizer parameters
+    learning_rate: float = 0.001
+    final_lr_ratio: float = 0.0001
+    warmup_epochs: int = 10
+    weight_decay: float = 0.001
+    
+    # Training settings
+    multi_scale: bool = True
+    test_time_augmentation: bool = True
+    save_period: int = 50
+    
+    # Project settings
+    project_name: str = "yolo_training"
+    experiment_name: str = "scar_detection"
+    
+    # Wandb settings
+    wandb_project: str = "YOLO-training"
+    wandb_name: str = "scar_detection"
+    wandb_mode: str = "disabled"
