@@ -7,7 +7,8 @@ import torch
 from PIL import Image
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
-
+from ultralytics import YOLO
+from tqdm import tqdm
 
 from utils.config import SAMDatasetConfig
 from utils.prompt import BoxPromptGenerator, PointPromptGenerator
@@ -53,6 +54,9 @@ class SAMDataset(torch.utils.data.Dataset):
         
         if self.config.remove_nonscar:
             self._remove_nonscar()
+            
+        if self.config.yolo_prompt:
+            self.yolo_model = YOLO(self.config.yolo_model_path)
         
     def _load_dataset(self):
         """Load dataset from dataset path.
@@ -143,9 +147,22 @@ class SAMDataset(torch.utils.data.Dataset):
         boxes = None
         
         if self.config.yolo_prompt:
-            pass # TODO: Get bounding boxes from yolo prompt
-            if self.config.point_prompt or self.config.box_prompt:
-                print(f"Warning: If yolo_prompt is True, point_prompt and box_prompt must be False. But point_prompt is {self.config.point_prompt} and box_prompt is {self.config.box_prompt}")
+            # Convert tensor back to numpy for YOLO (if needed)
+            if isinstance(image, torch.Tensor):
+                # Convert from tensor to numpy for YOLO prediction
+                image_for_yolo = (image.permute(1, 2, 0).numpy() * 255).astype(np.uint8)
+            else:
+                image_for_yolo = image
+            
+            results = self.yolo_model.predict(image_for_yolo, conf=0.25, iou=0.45, imgsz=640, device='cpu', verbose=False)
+            
+            # Handle empty predictions
+            if results and len(results) > 0 and hasattr(results[0], 'boxes') and len(results[0].boxes) > 0:
+                boxes = torch.tensor(results[0].boxes.xyxy.cpu().numpy(), dtype=torch.float32)
+            else:
+                # Fallback to generating box prompts from ground truth mask
+                box = self.box_generator.generate(mask_np)
+                boxes = torch.tensor(box, dtype=torch.float32)
         
         else:
             if self.config.point_prompt:
@@ -169,14 +186,15 @@ class SAMDataset(torch.utils.data.Dataset):
 if __name__ == "__main__":
     # Test dataset
     config = SAMDatasetConfig(
-        dataset_path='./data/train',
+        dataset_path='./sample_data/train',
         image_size=1024,
         point_prompt=True,
         box_prompt=True,
         num_points=3,
         train=True,
         remove_nonscar=True,
-        yolo_prompt=False,
+        yolo_prompt=True,
+        yolo_model_path='runs/yolo_scar_detection2/weights/best.pt',
         point_prompt_types=['positive'],
         sample_size=10
     )
@@ -184,8 +202,8 @@ if __name__ == "__main__":
     data = dataset[0]
     print(data['image'].shape)
     print(data['mask'].shape)
-    print(data['points_coords'].shape)
-    print(data['points_labels'].shape)
+    # print(data['points_coords'].shape)
+    # print(data['points_labels'].shape)
     print(data['boxes'].shape)
+    print(data['boxes'])
     
-    print(data['points_coords'][0])
