@@ -1,6 +1,6 @@
 # Robust Deep Learning for Myocardial Scar Segmentation in Cardiac MRI with Noisy Labels
 
-[![MICCAI 2024](https://img.shields.io/badge/MICCAI-2025-blue)](https://miccai2025.org/)
+[![MICCAI 2024](https://img.shields.io/badge/MICCAI-2025-blue)](https://conferences.miccai.org/2025/en/)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-1.9+-orange)](https://pytorch.org/)
 
@@ -8,12 +8,12 @@
 
 The accurate segmentation of myocardial scars from cardiac MRI is essential for clinical assessment and treatment planning. In this study, we propose a robust deep-learning pipeline for fully automated myocardial scar detection and segmentation by fine-tuning state-of-the-art models. The method explicitly addresses challenges of label noise from semi-automatic annotations, data heterogeneity, and class imbalance through the use of Kullback-Leibler loss and extensive data augmentation. We evaluate the model's performance on both acute and chronic cases and demonstrate its ability to produce accurate and smooth segmentations despite noisy labels. In particular, our approach outperforms state-of-the-art models like nnU-Net and shows strong generalizability in an out-of-distribution test set, highlighting its robustness across various imaging conditions and clinical tasks. These results establish a reliable foundation for automated myocardial scar quantification and support the broader clinical adoption of deep learning in cardiac imaging.
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 ![Architecture](figures/architecture.png)
 *Figure 1: YoloSAM pipeline combining YOLO for detection and SAM for precise segmentation*
 
-## 🔍 Sample Results
+## Sample Results
 
 ![Sample Detection](figures/sample_detection.png)
 *Figure 2: Sample myocardial scar detection and segmentation results on cardiac MRI*
@@ -56,6 +56,7 @@ result = model.predict("path/to/cardiac_mri.png")
 ```
 
 ## Project Structure
+
 YoloSAM/
 ├── models/ # Core model implementations
 │ ├── yolo.py # YOLO detection model
@@ -83,9 +84,10 @@ YoloSAM/
 └── checkpoints/ # Model checkpoints
 
 
-## 💾 Data Structure
+## Data Structure
 
 The project expects data in the following format:
+
 your_dataset/
 ├── train/
 │ ├── images/ # Cardiac MRI images (.png/.jpg)
@@ -95,7 +97,7 @@ your_dataset/
 │ └── masks/
 
 
-## 📚 Models
+## Models
 
 ### YOLO Detection Model (`models/yolo.py`)
 - Efficient object detection for myocardial scar localization
