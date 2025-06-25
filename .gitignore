@@ -33,3 +33,5 @@ Thumbs.db
 *.log
 outputs/
 runs/
+
+*.cache
