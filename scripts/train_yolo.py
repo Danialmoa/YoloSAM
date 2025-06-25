@@ -15,21 +15,6 @@ class YOLOTrainer:
         self.config = config
         self.device = torch.device(config.device)
         
-        # Create output directory
-        self.output_dir = Path('runs') / config.project_name
-        self.output_dir.mkdir(parents=True, exist_ok=True)
-        
-        # Create unique run directory
-        self.run_number = 0
-        while (self.output_dir / f'run_{self.run_number}').exists():
-            self.run_number += 1
-        self.run_name = f'run_{self.run_number}'
-        self.output_dir = self.output_dir / self.run_name
-        self.output_dir.mkdir(parents=True, exist_ok=True)
-        
-        # Initialize wandb
-        self.init_wandb()
-        
         # Initialize model
         self.model = YOLOModel(config)
         
@@ -37,56 +22,45 @@ class YOLOTrainer:
         self.current_epoch = 0
         self.best_map = 0.0
         
-        # Save config
-        self.save_config()
+        # These will be set after training starts
+        self.output_dir = None
+        self.run_name = None
     
-    def init_wandb(self):
+    def init_wandb(self, run_name: str):
         """Initialize Weights & Biases logging"""
         if self.config.wandb_mode != 'disabled':
             wandb.init(
                 project=self.config.wandb_project,
-                name=f"{self.config.wandb_name}_{self.run_name}",
+                name=f"{self.config.wandb_name}_{run_name}",
                 config=self.config.__dict__,
                 mode=self.config.wandb_mode
             )
         print(f"Wandb mode: {self.config.wandb_mode}")
     
-    def save_config(self):
-        """Save training configuration"""
-        config_path = self.output_dir / 'config.yaml'
-        with open(config_path, 'w') as f:
-            yaml.dump(self.config.__dict__, f, default_flow_style=False)
-        print(f"Config saved to: {config_path}")
     
     def train(self):
         """Train the YOLO model"""
         print(f"Starting YOLO training for {self.config.epochs} epochs")
-        print(f"Output directory: {self.output_dir}")
         
-        # Train the model
+        # Let YOLO handle directory creation
         results = self.model.train(
-            project=str(self.output_dir.parent),
-            name=self.run_name,
+            project="runs",
+            name=self.config.project_name,
         )
         
+        # Get the actual output directory that YOLO created
+        # YOLO creates: runs/{project_name}/{run_name}
+        self.output_dir = Path("runs") / self.config.project_name / results.save_dir.name
+        self.run_name = results.save_dir.name
+        
+        print(f"YOLO created output directory: {self.output_dir}")
+        
+        # Initialize wandb with the actual run name
+        self.init_wandb(self.run_name)
+    
         # Get training results and log to wandb
         if self.config.wandb_mode != 'disabled':
             self.log_results(results)
-        
-        # Save final model
-        best_model_path = self.output_dir / 'best.pt'
-        last_model_path = self.output_dir / 'last.pt'
-        
-        # Copy the best weights from YOLO's output directory
-        yolo_output_dir = self.output_dir / 'weights'
-        if yolo_output_dir.exists():
-            import shutil
-            if (yolo_output_dir / 'best.pt').exists():
-                shutil.copy2(yolo_output_dir / 'best.pt', best_model_path)
-                print(f"Best model saved to: {best_model_path}")
-            if (yolo_output_dir / 'last.pt').exists():
-                shutil.copy2(yolo_output_dir / 'last.pt', last_model_path)
-                print(f"Last model saved to: {last_model_path}")
         
         print("Training completed!")
         return results

@@ -83,6 +83,7 @@ class YOLOConfig:
     model_type: str = "yolo11n"
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
     checkpoint_path: Optional[str] = None
+    pretrained_path: Optional[str] = None
     
     # Dataset configuration
     dataset_path: str = "data/train"
