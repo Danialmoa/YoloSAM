@@ -33,7 +33,7 @@ The accurate segmentation of myocardial scars from cardiac MRI is essential for 
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/YoloSAM.git
+git clone https://github.com/Danialmoa/YoloSAM
 cd YoloSAM
 
 # Install dependencies
