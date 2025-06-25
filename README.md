@@ -136,6 +136,16 @@ The notebook includes:
 | nnU-Net | 0.579±0.338 | 11.786±16.004 | 0.702±0.345 | 0.748±0.341 |
 | **YoloSAM (Ours)** | **0.601±0.330** | **10.728±14.217** | **0.753±0.318** | **0.797±0.311** |
   
+## Acknowledgments
+
+We thank the following projects and teams for their foundational work:
+
+- **Meta AI Research** for developing and open-sourcing the [Segment Anything Model (SAM)](https://github.com/facebookresearch/segment-anything)
+- **Ultralytics** for the [YOLOv11](https://github.com/ultralytics/ultralytics) object detection framework
+
+This work builds upon these excellent foundations to advance automated myocardial scar segmentation in cardiac MRI.
+
+
 ## Citation
 
 If you use this code in your research, please cite our paper:
