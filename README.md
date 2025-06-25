@@ -127,14 +127,6 @@ The notebook includes:
 - Evaluation and visualization
 - Results analysis and comparison
 
-
-
-## Results
-   
-| Method | Dice Score | HD | AS | PS
-|--------|------------|-----|-------------|-------------|
-| nnU-Net | 0.579±0.338 | 11.786±16.004 | 0.702±0.345 | 0.748±0.341 |
-| **YoloSAM (Ours)** | **0.601±0.330** | **10.728±14.217** | **0.753±0.318** | **0.797±0.311** |
   
 ## Acknowledgments
 
