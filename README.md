@@ -134,6 +134,7 @@ We thank the following projects and teams for their foundational work:
 
 - **Meta AI Research** for developing and open-sourcing the [Segment Anything Model (SAM)](https://github.com/facebookresearch/segment-anything)
 - **Ultralytics** for the [YOLOv12](https://github.com/ultralytics/ultralytics) object detection framework
+- **EMIDEC Challenge** for providing sample MRI data for myocardial infarct detection and segmentation
 
 This work builds upon these excellent foundations to advance automated myocardial scar segmentation in cardiac MRI.
 
