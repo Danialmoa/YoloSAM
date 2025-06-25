@@ -137,12 +137,11 @@ class SAMDataset(torch.utils.data.Dataset):
         
         mask = mask.unsqueeze(0)
         
-        # Generate prompts
-        points_coords = []
-        points_labels = []
-        boxes = []
+        # Generate prompts - return tensors directly, not lists
+        points_coords = None
+        points_labels = None  
+        boxes = None
         
-        # *** NOTE: If yolo_prompt is True, point_prompt and box_prompt will be ignored. ***
         if self.config.yolo_prompt:
             pass # TODO: Get bounding boxes from yolo prompt
             if self.config.point_prompt or self.config.box_prompt:
@@ -150,25 +149,20 @@ class SAMDataset(torch.utils.data.Dataset):
         
         else:
             if self.config.point_prompt:
-                for i in range(self.config.num_points):
-                    points, labels = self.point_generator.generate(mask_np)
-                    points_coords.append(torch.tensor(points, dtype=torch.float32))
-                    points_labels.append(torch.tensor(labels, dtype=torch.float32))
-                
-                points_coords = torch.stack(points_coords)  # Shape: [num_prompts, num_points, 2]
-                points_labels = torch.stack(points_labels)  # Shape: [num_prompts, num_points]
-                
+                points, labels = self.point_generator.generate(mask_np)
+                points_coords = torch.tensor(points, dtype=torch.float32)
+                points_labels = torch.tensor(labels, dtype=torch.float32)
+
             if self.config.box_prompt:
                 box = self.box_generator.generate(mask_np)
-                boxes.append(torch.tensor(box, dtype=torch.float32))
-                boxes = torch.stack(boxes)
+                boxes = torch.tensor(box, dtype=torch.float32) 
 
         return {
             'image': image.float(),
-            'mask': mask.float(),
-            'points_coords': points_coords if self.config.point_prompt else None,
-            'points_labels': points_labels if self.config.point_prompt else None,
-            'boxes': boxes if self.config.box_prompt else None,
+            'mask': mask.float(), 
+            'points_coords': points_coords,
+            'points_labels': points_labels,
+            'boxes': boxes,
             'image_name': os.path.basename(self.image_paths[idx])
         }
     

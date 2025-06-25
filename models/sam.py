@@ -58,7 +58,9 @@ class SAMModel(nn.Module):
         with torch.no_grad():
             box = self._prepare_box(bounding_box) if bounding_box is not None else None
             pts = self._prepare_points(points) if points is not None else None
-
+            print("point_coords.shape: ", pts[0].shape)
+            print("point_labels.shape: ", pts[1].shape)
+            print("box.shape: ", box.shape)
             sparse_embeddings, dense_embeddings = self.prompt_encoder(
                 points=pts,
                 boxes=box,
@@ -83,8 +85,11 @@ class SAMModel(nn.Module):
     
     def _prepare_box(self, bounding_box: torch.Tensor) -> torch.Tensor:
         """Prepare bounding box for SAM model."""
+        # Add batch dimension if not present
+        if len(bounding_box.shape) == 1:
+            bounding_box = bounding_box.unsqueeze(0)  # [4] -> [1, 4]
         if len(bounding_box.shape) == 2:
-            bounding_box = bounding_box[:, None, :]
+            bounding_box = bounding_box.unsqueeze(1)  # [1, 4] -> [1, 1, 4]
         return bounding_box.to(self.device)
     
     def _prepare_points(self, points: Dict[str, torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]:
@@ -92,9 +97,11 @@ class SAMModel(nn.Module):
         point_coords = points['coords'].to(self.device)
         point_labels = points['labels'].to(self.device)
         
+        # Add batch dimension if not present
         if len(point_coords.shape) == 2:
-            point_coords = point_coords.unsqueeze(0)
-            point_labels = point_labels.unsqueeze(0)
-            
-        return (point_coords.to(self.device), point_labels.to(self.device))
+            point_coords = point_coords.unsqueeze(0)  # [3, 2] -> [1, 3, 2]
+        if len(point_labels.shape) == 1:
+            point_labels = point_labels.unsqueeze(0)  # [3] -> [1, 3]
+        
+        return (point_coords, point_labels)
     

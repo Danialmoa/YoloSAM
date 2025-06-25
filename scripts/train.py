@@ -142,14 +142,7 @@ class Train:
             batch_loss = 0
             batch_pred_masks = []
             
-            for i, _ in enumerate(images):
-                if batch['points_coords'] is not None:
-                    num_prompts = batch['points_coords'][i].shape[0]
-                else:
-                    num_prompts = batch['boxes'][i].shape[0]
-                
-                image_pred_masks = []
-                
+            for i, _ in enumerate(images):                
                 prompt_data = {}
                 if batch['points_coords'] is not None:
                     prompt_data['points'] = {
@@ -306,7 +299,7 @@ if __name__ == "__main__":
     train_dataset_config = SAMDatasetConfig(
         dataset_path='./sample_data/train/',
         remove_nonscar=True,
-        sample_size=None,
+        sample_size=2,
         point_prompt=True,
         point_prompt_types=['positive'],
         num_points=3,
