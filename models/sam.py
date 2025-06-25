@@ -58,9 +58,9 @@ class SAMModel(nn.Module):
         with torch.no_grad():
             box = self._prepare_box(bounding_box) if bounding_box is not None else None
             pts = self._prepare_points(points) if points is not None else None
-            print("point_coords.shape: ", pts[0].shape)
-            print("point_labels.shape: ", pts[1].shape)
-            print("box.shape: ", box.shape)
+            # print("point_coords.shape: ", pts[0].shape)
+            # print("point_labels.shape: ", pts[1].shape)
+            # print("box.shape: ", box.shape)
             sparse_embeddings, dense_embeddings = self.prompt_encoder(
                 points=pts,
                 boxes=box,

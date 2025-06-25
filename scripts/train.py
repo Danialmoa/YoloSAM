@@ -313,7 +313,7 @@ if __name__ == "__main__":
     val_dataset_config = SAMDatasetConfig(
         dataset_path='./sample_data/val/',
         remove_nonscar=True,
-        sample_size=None,
+        sample_size=2,
         point_prompt=True,
         point_prompt_types=['positive'],
         num_points=3,
