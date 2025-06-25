@@ -18,8 +18,9 @@ class YOLOModel:
         # Initialize model
         self.load_model()
         
-        # Create dataset configuration
-        self.create_dataset_yaml()
+        # Create dataset configuration only if dataset_path is provided (for training)
+        if self.config.dataset_path is not None:
+            self.create_dataset_yaml()
     
     def load_model(self):
         """Load YOLO model from pretrained weights or checkpoint."""
@@ -32,6 +33,10 @@ class YOLOModel:
     
     def create_dataset_yaml(self):
         """Create the dataset configuration file for YOLO training."""
+        if self.config.dataset_path is None:
+            print("No dataset path provided, skipping dataset YAML creation")
+            return None
+        
         # Use absolute paths to avoid relative path issues
         data_yaml = {
             'path': str(Path(self.config.dataset_path).parent.absolute()),
