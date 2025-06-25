@@ -118,7 +118,7 @@ your_dataset/
 
 For easy experimentation and fine-tuning, check out our comprehensive Jupyter notebook:
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](notebooks/YoloSAM_Tutorial.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Danialmoa/YoloSAM/blob/main/notebooks/YoloSAM_Tutorial.ipynb)
 
 The notebook includes:
 - Step-by-step setup instructions
