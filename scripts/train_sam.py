@@ -13,7 +13,7 @@ from utils.dataset import SAMDataset
 from utils.config import SAMFinetuneConfig, SAMDatasetConfig
 
 
-class Train:
+class TrainSAM:
     def __init__(
         self,
         config: SAMFinetuneConfig,
@@ -327,5 +327,5 @@ if __name__ == "__main__":
     train_dataset = SAMDataset(train_dataset_config)
     val_dataset = SAMDataset(val_dataset_config)
 
-    trainer = Train(finetune_config, train_dataset, val_dataset)
+    trainer = TrainSAM(finetune_config, train_dataset, val_dataset)
     trainer.train(finetune_config.num_epochs)

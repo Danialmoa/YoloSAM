@@ -156,7 +156,7 @@ def main():
         # Detection parameters
         iou_threshold=0.2,
         conf_threshold=0.15,
-        max_detections=2,
+        max_detections=1,
         
         # Project settings
         project_name="yolo_scar_detection",
