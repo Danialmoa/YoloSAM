@@ -62,8 +62,12 @@ class SAMDatasetConfig:
     remove_nonscar: bool = True
     
     # prompt
+    # YOLO prompt
     yolo_prompt: bool = False # if True, use yolo boxes as prompt
     yolo_model_path: str = "checkpoints/yolo11n.pt"
+    yolo_conf_threshold: float = 0.25
+    yolo_iou_threshold: float = 0.45
+    yolo_imgsz: int = 640
     
     # box prompt
     box_prompt: bool = True

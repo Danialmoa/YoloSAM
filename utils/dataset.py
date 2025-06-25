@@ -154,7 +154,13 @@ class SAMDataset(torch.utils.data.Dataset):
             else:
                 image_for_yolo = image
             
-            results = self.yolo_model.predict(image_for_yolo, conf=0.25, iou=0.45, imgsz=640, device='cpu', verbose=False)
+            results = self.yolo_model.predict(
+                image_for_yolo, 
+                conf=self.config.yolo_conf_threshold, 
+                iou=self.config.yolo_iou_threshold, 
+                imgsz=self.config.yolo_imgsz, 
+                device=self.config.device, 
+                verbose=False)
             
             # Handle empty predictions
             if results and len(results) > 0 and hasattr(results[0], 'boxes') and len(results[0].boxes) > 0:
