@@ -1,12 +1,18 @@
 # Robust Deep Learning for Myocardial Scar Segmentation in Cardiac MRI with Noisy Labels
 
+[![arXiv](https://img.shields.io/badge/arXiv-2506.21151-b31b1b.svg)](https://arxiv.org/abs/2506.21151)
 [![MICCAI 2024](https://img.shields.io/badge/MICCAI-2025-blue)](https://conferences.miccai.org/2025/en/)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-1.9+-orange)](https://pytorch.org/)
 
+
+📄 This paper has been accepted by MICCAI 2025 — (https://arxiv.org/abs/2506.21151)
+
+
 ## Abstract
 
 The accurate segmentation of myocardial scars from cardiac MRI is essential for clinical assessment and treatment planning. In this study, we propose a robust deep-learning pipeline for fully automated myocardial scar detection and segmentation by fine-tuning state-of-the-art models. The method explicitly addresses challenges of label noise from semi-automatic annotations, data heterogeneity, and class imbalance through the use of Kullback-Leibler loss and extensive data augmentation. We evaluate the model's performance on both acute and chronic cases and demonstrate its ability to produce accurate and smooth segmentations despite noisy labels. In particular, our approach outperforms state-of-the-art models like nnU-Net and shows strong generalizability in an out-of-distribution test set, highlighting its robustness across various imaging conditions and clinical tasks. These results establish a reliable foundation for automated myocardial scar quantification and support the broader clinical adoption of deep learning in cardiac imaging.
+📢 Accepted at MICCAI 2025
 
 ## Architecture Overview
 
