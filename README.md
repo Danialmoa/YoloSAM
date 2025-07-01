@@ -148,7 +148,12 @@ This work builds upon these excellent foundations to advance automated myocardia
 ## Citation
 
 If you use this code in your research, please cite our paper:
-```bibtex
+```@article{moafi2025robust,
+  title={Robust Deep Learning for Myocardial Scar Segmentation in Cardiac MRI with Noisy Labels},
+  author={Moafi, Aida and Moafi, Danial and Mirkes, Evgeny M and McCann, Gerry P and Alatrany, Abbas S and Arnold, Jayanth R and Ghazi, Mostafa Mehdipour},
+  journal={arXiv preprint arXiv:2506.21151},
+  year={2025}
+}
 ```
 
 ## Contact
